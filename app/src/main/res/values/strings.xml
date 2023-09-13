@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">SDP Encryptor</string>
+    <string name="errormessage">Message must contain letters</string>
+    <string name="errorkey">Key Phrase must contain only letters</string>
+    <string name="errorshift">Shift Number must be >= 1</string>
+
+    <string name="fieldID1">messageInput</string>
+    <string name="fieldID2">keyPhrase</string>
+    <string name="fieldID3">shiftNumber</string>
+    <string name="fieldID4">cipherText</string>
+    <string name="buttonID">encryptButton</string>
+    <string name="message">Message</string>
+    <string name="key">Key</string>
+    <string name="rotate">Rotate</string>
+    <string name="encrypt">ENCRYPT</string>
+    <string name="encrypted_message">Encrypted Message:</string>
+    <string name="qw3_amp_yo"><![CDATA[QW3&yO]]></string>
+</resources>
