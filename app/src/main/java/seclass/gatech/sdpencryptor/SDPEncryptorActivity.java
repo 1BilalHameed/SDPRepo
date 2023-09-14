@@ -1,10 +1,7 @@
 package seclass.gatech.sdpencryptor;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,11 +22,11 @@ public class SDPEncryptorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sdpencryptor);
 
 
-        messageEditText = findViewById(R.id.messageInput);
-        keyPhraseEditText = findViewById(R.id.keyPhrase);
-        shiftNumberEditText = findViewById(R.id.shiftNumber);
-        resultTextView = findViewById(R.id.cipherText);
-        encodeButton = findViewById(R.id.encryptButton);
+        messageEditText = findViewById(R.id.entryTextID);
+        keyPhraseEditText = findViewById(R.id.argInput1ID);
+        shiftNumberEditText = findViewById(R.id.argInput2ID);
+        resultTextView = findViewById(R.id.textEncryptedID);
+        encodeButton = findViewById(R.id.encryptButtonID);
 
         encodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,89 +36,107 @@ public class SDPEncryptorActivity extends AppCompatActivity {
         });
     }
 
+
+
     private void encodeMessage() {
-        String message = messageEditText.getText().toString().trim();
-        String keyPhrase = keyPhraseEditText.getText().toString().trim();
-        String shiftNumberString = shiftNumberEditText.getText().toString().trim();
+        String entryText = messageEditText.getText().toString().trim();
+        String arg1Text = keyPhraseEditText.getText().toString().trim();
+        String arg2Text = shiftNumberEditText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(message) || !message.matches(".*[a-zA-Z]+.*")) {
-            messageEditText.setError("Message must contain letters");
+        // Check for input validity
+        if (entryText.isEmpty() || !entryText.matches(".*[a-zA-Z0-9].*")) {
+            messageEditText.setError("Invalid Entry Text");
             resultTextView.setText("");
             return;
         }
 
-        if (TextUtils.isEmpty(keyPhrase) || !keyPhrase.matches("[a-zA-Z]+")) {
-            keyPhraseEditText.setError("Key Phrase must contain only letters");
+        if (arg1Text.isEmpty()){
+            keyPhraseEditText.setError("Invalid Arg Input 1");
+            resultTextView.setText("");
+            return;
+        }
+        if (arg2Text.isEmpty()){
+            shiftNumberEditText.setError("Invalid Arg Input 2");
             resultTextView.setText("");
             return;
         }
 
-        int shiftNumber;
-        try {
-            shiftNumber = Integer.parseInt(shiftNumberString);
-        } catch (NumberFormatException e) {
-            shiftNumberEditText.setError("Shift Number must be >= 1");
+        int arg1 = Integer.parseInt(arg1Text);
+        int arg2 = Integer.parseInt(arg2Text);
+
+        if (!isValidArg1(arg1)) {
+            keyPhraseEditText.setError("Invalid Arg Input 1");
             resultTextView.setText("");
             return;
         }
 
-        if (shiftNumber < 1) {
-            shiftNumberEditText.setError("Shift Number must be >= 1");
+        if (!isValidArg2(arg2)) {
+            shiftNumberEditText.setError("Invalid Arg Input 2");
             resultTextView.setText("");
             return;
         }
 
-        String encryptedMessage = encryptMessage(message, keyPhrase, shiftNumber);
-        resultTextView.setText(encryptedMessage);
+        // Perform encryption
+        String encryptedText = encrypt(entryText, arg1, arg2);
+        resultTextView.setText("Text Encrypted = " + encryptedText);
     }
 
-    public static String encryptMessage(String message, String keyPhrase, int shiftNumber) {
-        StringBuilder vigenereCipher = new StringBuilder();
-        int keyIndex = 0;
+    private boolean isValidArg1(int arg1) {
+        // Check if arg1 is coprime to 62 (i.e., gcd(arg1, 62) == 1)
+        // Implement this validation logic
 
-        for (int i = 0; i < message.length(); i++) {
-            char c = message.charAt(i);
+        int gcd = calculateGCD(arg1, 62);
+        return gcd == 1;
+    }
 
-            if (Character.isLetter(c)) {
-                char keyChar = Character.toUpperCase(keyPhrase.charAt(keyIndex % keyPhrase.length()));
-                int shift = Character.toUpperCase(keyChar) - 'A';
+    private boolean isValidArg2(int arg2) {
+        // Check if arg2 is within the valid range (1 to 61)
+        return arg2 >= 1 && arg2 < 62;
+    }
+
+    private String encrypt(String text, int arg1, int arg2) {
+        StringBuilder encryptedText = new StringBuilder();
+
+        for (char c : text.toCharArray()) {
+            if (Character.isLetterOrDigit(c)) {
+                int x;
 
                 if (Character.isLowerCase(c)) {
-                    shift = (shift + 26) % 26;
+                    x = c - 'a'; // 0 to 25
+                } else if (Character.isUpperCase(c)) {
+                    x = c - 'A' + 26; // 26 to 51
+                } else {
+                    x = c - '0' + 52; // 52 to 61
                 }
 
-                char encryptedChar = (char) (((c - 'A' + shift) % 26) + 'A');
-                vigenereCipher.append(encryptedChar);
-                keyIndex++;
+                int encryptedValue = (arg1 * x + arg2) % 62;
+                char encryptedChar;
+
+                if (encryptedValue < 26) {
+                    encryptedChar = (char) (encryptedValue + 'a');
+                } else if (encryptedValue < 52) {
+                    encryptedChar = (char) (encryptedValue - 26 + 'A');
+                } else {
+                    encryptedChar = (char) (encryptedValue - 52 + '0');
+                }
+
+                encryptedText.append(encryptedChar);
             } else {
-                vigenereCipher.append(c);
+                // Non-alphanumeric characters remain unchanged
+                encryptedText.append(c);
             }
         }
 
-        StringBuilder rotatedMessage = new StringBuilder();
+        return encryptedText.toString();
+    }
 
-        for (char c : vigenereCipher.toString().toCharArray()) {
-            if (Character.isLetter(c)) {
-                char rotatedChar = rotateCharacter(c, shiftNumber);
-                if (c == '&') {
-                    rotatedChar = '&';
-                } else if (c == ' ') {
-                    rotatedChar = '_';
-                }
-                rotatedMessage.append(rotatedChar);
-            } else {
-                rotatedMessage.append(c);
-            }
+    private int calculateGCD(int a, int b) {
+        if (b == 0) {
+            return a;
+        } else {
+            return calculateGCD(b, a % b);
         }
-
-        return rotatedMessage.toString();
     }
 
-    private static char rotateCharacter(char c, int shiftNumber) {
-        char base = Character.isUpperCase(c) ? 'A' : 'a';
-        int shifted = ((c - base) + shiftNumber) % 26;
-
-        return (char) (base + shifted);
-    }
 
 }

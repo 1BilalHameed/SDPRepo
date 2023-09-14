@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/messageInput"
+            android:id="@+id/entryTextID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -26,7 +26,7 @@
 
 
         <EditText
-            android:id="@+id/keyPhrase"
+            android:id="@+id/argInput1ID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -34,11 +34,11 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/drawable_edit_text"
             android:hint="@string/key"
-            android:inputType="text"
+            android:inputType="number"
             android:padding="10dp" />
 
         <EditText
-            android:id="@+id/shiftNumber"
+            android:id="@+id/argInput2ID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -51,7 +51,7 @@
 
 
         <Button
-            android:id="@+id/encryptButton"
+            android:id="@+id/encryptButtonID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -79,13 +79,14 @@
 
 
         <TextView
-            android:id="@+id/cipherText"
+            android:id="@+id/textEncryptedID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/qw3_amp_yo"
             android:textAlignment="center"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"/>
 
 
     </LinearLayout>
