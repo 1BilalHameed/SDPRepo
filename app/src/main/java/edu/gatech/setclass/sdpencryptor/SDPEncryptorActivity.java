@@ -1,4 +1,5 @@
-package seclass.gatech.sdpencryptor;
+package edu.gatech.setclass.sdpencryptor;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;

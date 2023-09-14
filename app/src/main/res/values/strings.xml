@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SDP Encryptor</string>
+    <string name="app_name">SDP Encryptor Fall 2023</string>
     <string name="errormessage">Message must contain letters</string>
     <string name="errorkey">Key Phrase must contain only letters</string>
     <string name="errorshift">Shift Number must be >= 1</string>
